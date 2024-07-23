@@ -19,6 +19,63 @@
 
 _UA_BEGIN_DECLS
 
+
+/**
+ * PAPI Interface for performance profiling
+ * 
+ */
+
+#ifdef KRITIS3M_PERFORMANCE_MONITORING
+    #include <papi.h>
+    #include "event_config.h"
+
+    // we need file handling, performance profiles and runtime measurements
+  UA_INLINABLE( UA_THREADSAFE void
+    initialize_papi(EventConfig *config), {
+        // setup data file export
+        config->export_handle = fopen(config->file_name, "w");
+        if (config->export_handle == NULL) {
+            fprintf(stderr, "Error opening file.\n");
+            exit(1);
+        }
+        int retval = PAPI_library_init(PAPI_VER_CURRENT);
+        if (retval != PAPI_VER_CURRENT) {
+            fprintf(stderr, "PAPI library version mismatch!\n");
+            exit(1);
+        }
+        if (retval < 0) {
+            fprintf(stderr, "Initialization error!\n");
+            exit(1);
+        }
+    })
+
+    // UA_INLINABLE( UA_THREADSAFE void
+    // deinit_papi(), {
+    //     //....
+    // })
+
+    // UA_INLINABLE( UA_THREADSAFE void
+    // create_event_set(EventConfig *config), {
+    //     //....
+    // })
+
+    // UA_INLINABLE( UA_THREADSAFE void
+    // start_event_set(EventConfig *config), {
+    //     //....
+    // })
+
+    // UA_INLINABLE( UA_THREADSAFE void
+    // stop_event_set(EventConfig *config), {
+    //     //....
+    // })
+
+    // UA_INLINABLE( UA_THREADSAFE void
+    // cleanup_event_set(EventConfig *config), {
+    //     //....
+    // })
+
+#endif
+
 /**
  * .. _client-highlevel:
  *
@@ -137,12 +194,25 @@ UA_Client_readEventNotifierAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outEventNotifier, &UA_TYPES[UA_TYPES_BYTE]);
 })
 
-UA_INLINABLE( UA_THREADSAFE UA_StatusCode
-UA_Client_readValueAttribute(UA_Client *client, const UA_NodeId nodeId,
-                             UA_Variant *outValue), {
-    return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUE,
-                                     outValue, &UA_TYPES[UA_TYPES_VARIANT]);
-})
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readValueAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                UA_Variant *outValue), {
+        return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUE,
+                                        outValue, &UA_TYPES[UA_TYPES_VARIANT]);
+    })
+#else
+    // UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    // UA_Client_readValueAttribute(UA_Client *client, const UA_NodeId nodeId,
+    //                             UA_Variant *outValue), {
+    //     PAPI_start(EventSet);
+    //     UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUE,
+    //                             outValue, &UA_TYPES[UA_TYPES_VARIANT]);
+    //     PAPI_stop(...)
+    //     return ret;
+    // })
+#endif
+
 
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readDataTypeAttribute(UA_Client *client, const UA_NodeId nodeId,

@@ -81,6 +81,9 @@ endif()
 # Build Options #
 #################
 
+# Set custom KRITS3M build options 
+option(KRITIS3M_ENABLE_PERFORMANCE_MONITORING "Enable the PAPI Interface Instrumentation" ON)
+
 # Set default build type.
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "CMAKE_BUILD_TYPE not given; setting to 'Debug'")
@@ -131,8 +134,8 @@ mark_as_advanced(UA_ENABLE_DISCOVERY_MULTICAST)
 
 # security provider
 set(UA_ENCRYPTION_PLUGINS "MBEDTLS" "OPENSSL" "LIBRESSL")
-set(UA_ENABLE_ENCRYPTION OFF CACHE STRING "Encryption support (LibreSSL EXPERIMENTAL)")
-SET_PROPERTY(CACHE UA_ENABLE_ENCRYPTION PROPERTY STRINGS "OFF" ${UA_ENCRYPTION_PLUGINS})
+set(UA_ENABLE_ENCRYPTION "ON" CACHE STRING "Encryption support (LibreSSL EXPERIMENTAL)")
+SET_PROPERTY(CACHE UA_ENABLE_ENCRYPTION PROPERTY STRINGS "ON" ${UA_ENCRYPTION_PLUGINS})
 option(UA_ENABLE_ENCRYPTION_OPENSSL "Deprecated: Enable encryption support (uses openssl)" OFF)
 mark_as_advanced(UA_ENABLE_ENCRYPTION_OPENSSL)
 option(UA_ENABLE_ENCRYPTION_MBEDTLS "Deprecated: Enable encryption support (uses mbedTLS)" OFF)
@@ -251,7 +254,7 @@ if(UA_ENABLE_COVERAGE)
     find_package(codecov REQUIRED)
 endif()
 
-option(UA_ENABLE_QUERY "Enable query support in the client (most servers don't support it)" OFF)
+option(UA_ENABLE_QUERY "Enable query support in the client (most servers don't support it)" ON)
 mark_as_advanced(UA_ENABLE_QUERY)
 
 option(UA_FORCE_32BIT "Force compilation as 32-bit executable" OFF)
@@ -1216,6 +1219,14 @@ if(UA_ENABLE_ENCRYPTION_LIBRESSL)
     target_compile_definitions(open62541-object PUBLIC NOCRYPT=1)
     target_compile_definitions(open62541 PUBLIC NOCRYPT=1)
 endif()
+
+if(KRITIS3M_ENABLE_PERFORMANCE_MONITORING)
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKRITIS3M_PERFORMANCE_MONITORING")  
+    target_compile_definitions(open62541-plugins PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
+    target_compile_definitions(open62541-object PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
+    target_compile_definitions(open62541 PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
+endif()
+
 
 # Declare include directories
 function(include_directories_private)
