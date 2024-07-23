@@ -28,11 +28,15 @@ _UA_BEGIN_DECLS
 #ifdef KRITIS3M_PERFORMANCE_MONITORING
     #include <papi.h>
     #include "event_config.h"
+    #include <assert.h>
+
+    static EventConfig * global_config;
 
     // we need file handling, performance profiles and runtime measurements
+    // to be called where the lib is beeing used
   UA_INLINABLE( UA_THREADSAFE void
     initialize_papi(EventConfig *config), {
-        // setup data file export
+        global_config = config;
         config->export_handle = fopen(config->file_name, "w");
         if (config->export_handle == NULL) {
             fprintf(stderr, "Error opening file.\n");
@@ -49,30 +53,87 @@ _UA_BEGIN_DECLS
         }
     })
 
-    // UA_INLINABLE( UA_THREADSAFE void
-    // deinit_papi(), {
-    //     //....
-    // })
+    // also to be called where the lib is supposed to be used  
+  UA_INLINABLE( UA_THREADSAFE void
+    deinit_papi(EventConfig *config), {
+        fclose(config->export_handle);
+        PAPI_cleanup_eventset(config->event_set);
+        int retval = PAPI_destroy_eventset(&config->event_set);
+        if (retval != PAPI_OK) {
+            fprintf(stderr, "Error destroying event set!\n");
+            exit(1);
+        }
+        PAPI_shutdown();
+    })
 
-    // UA_INLINABLE( UA_THREADSAFE void
-    // create_event_set(EventConfig *config), {
-    //     //....
-    // })
+    // setup code for the lib on the callsite (call where lib is used)
+  UA_INLINABLE( UA_THREADSAFE void
+    create_event_set(EventConfig *config), {
+        int retval = PAPI_create_eventset(&(config->event_set));
+        if (retval != PAPI_OK){
+            fprintf(stderr, "Failed to create a new event set\n");
+            exit(1);
+        }
+        for (int i = 0; i < config->num_events; i++) {
+            retval = PAPI_event_name_to_code(config->event_names[i], &config->event_codes[i]);
+            if (retval != PAPI_OK) {
+                fprintf(stderr, "Error translating event name to code: %s\n", config->event_names[i]);
+                exit(1);
+            }
+            retval = PAPI_add_event(config->event_set, config->event_codes[i]);
+            if (retval != PAPI_OK) {
+                fprintf(stderr, "Error adding event: %s\n", config->event_names[i]);
+                exit(1);
+            }
+        }
+    })
 
-    // UA_INLINABLE( UA_THREADSAFE void
-    // start_event_set(EventConfig *config), {
-    //     //....
-    // })
+    // instrumentation for the lib
+  UA_INLINABLE( UA_THREADSAFE void
+    start_event_set(EventConfig *config), {
+        int retval = PAPI_reset(config->event_set);
+        if (retval != PAPI_OK)
+        {
+            fprintf(stderr, "Failed to reset available counters\n");
+            exit(1);
+        }
+        retval = PAPI_start(config->event_set);
+        if (retval != PAPI_OK)
+        {
+            fprintf(stderr, "Failed to start available counters\n");
+            exit(1);
+        }
+    })
 
-    // UA_INLINABLE( UA_THREADSAFE void
-    // stop_event_set(EventConfig *config), {
-    //     //....
-    // })
+    // instrumentation for the lib
+  UA_INLINABLE( UA_THREADSAFE void
+    stop_event_set(EventConfig *config), {
+        int retval = PAPI_stop(config->event_set, config->values);
+        if (retval != PAPI_OK)
+        {
+            fprintf(stderr, "Failed to stop measurement\n");
+            exit(1);
+        }
+        assert(config->export_handle);
+        for (int i = 0; i < config->num_events; i++)
+        {
+            fprintf(config->export_handle,
+                    "%lld;", 
+                    config->values[i]
+                );
+        }
+        fprintf(config->export_handle, "\n");
+    })
 
-    // UA_INLINABLE( UA_THREADSAFE void
-    // cleanup_event_set(EventConfig *config), {
-    //     //....
-    // })
+    // can be used on callsite or here
+  UA_INLINABLE( UA_THREADSAFE void
+    cleanup_event_set(EventConfig *config), {
+        int retval = PAPI_cleanup_eventset(config->event_set);
+        if (retval != PAPI_OK) {
+            fprintf(stderr, "Could not unload eventest using PAPI API!\n");
+            exit(1);
+        }
+    })
 
 #endif
 
@@ -202,15 +263,15 @@ UA_Client_readEventNotifierAttribute(UA_Client *client, const UA_NodeId nodeId,
                                         outValue, &UA_TYPES[UA_TYPES_VARIANT]);
     })
 #else
-    // UA_INLINABLE( UA_THREADSAFE UA_StatusCode
-    // UA_Client_readValueAttribute(UA_Client *client, const UA_NodeId nodeId,
-    //                             UA_Variant *outValue), {
-    //     PAPI_start(EventSet);
-    //     UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUE,
-    //                             outValue, &UA_TYPES[UA_TYPES_VARIANT]);
-    //     PAPI_stop(...)
-    //     return ret;
-    // })
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readValueAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                UA_Variant *outValue), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUE,
+                                outValue, &UA_TYPES[UA_TYPES_VARIANT]);
+        stop_event_set(global_config);
+        return ret;
+    })
 #endif
 
 
