@@ -91,7 +91,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(UA_ENABLE_AMALGAMATION "Concatenate the library to a single file open62541.h/.c" OFF)
-option(BUILD_SHARED_LIBS "Enable building of shared libraries (dll/so)" OFF)
+option(BUILD_SHARED_LIBS "Enable building of shared libraries (dll/so)" ON)
 set(UA_LOGLEVEL 100 CACHE STRING "Minimal level for logs (in addition to the log plugin settings) (100=TRACE, 200=DEBUG, 300=INFO, 400=WARNING, 500=ERROR, 600=FATAL)")
 option(UA_ENABLE_DIAGNOSTICS "Enable diagnostics information exposed by the server" ON)
 option(UA_ENABLE_METHODCALLS "Enable the Method service set" ON)
@@ -134,7 +134,7 @@ mark_as_advanced(UA_ENABLE_DISCOVERY_MULTICAST)
 
 # security provider
 set(UA_ENCRYPTION_PLUGINS "MBEDTLS" "OPENSSL" "LIBRESSL")
-set(UA_ENABLE_ENCRYPTION "ON" CACHE STRING "Encryption support (LibreSSL EXPERIMENTAL)")
+set(UA_ENABLE_ENCRYPTION "MBEDTLS" CACHE STRING "Encryption support (LibreSSL EXPERIMENTAL)")
 SET_PROPERTY(CACHE UA_ENABLE_ENCRYPTION PROPERTY STRINGS "ON" ${UA_ENCRYPTION_PLUGINS})
 option(UA_ENABLE_ENCRYPTION_OPENSSL "Deprecated: Enable encryption support (uses openssl)" OFF)
 mark_as_advanced(UA_ENABLE_ENCRYPTION_OPENSSL)
@@ -1222,9 +1222,9 @@ endif()
 
 if(KRITIS3M_ENABLE_PERFORMANCE_MONITORING)
     # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DKRITIS3M_PERFORMANCE_MONITORING")  
-    target_compile_definitions(open62541-plugins PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
-    target_compile_definitions(open62541-object PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
-    target_compile_definitions(open62541 PRIVATE -DKRITIS3M_PERFORMANCE_MONITORING)
+    target_compile_definitions(open62541-plugins PRIVATE KRITIS3M_PERFORMANCE_MONITORING)
+    target_compile_definitions(open62541-object PRIVATE KRITIS3M_PERFORMANCE_MONITORING)
+    target_compile_definitions(open62541 PRIVATE KRITIS3M_PERFORMANCE_MONITORING)
 endif()
 
 
