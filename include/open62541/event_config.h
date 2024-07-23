@@ -7,14 +7,14 @@
 #include <papi.h>
 
 
-#define MAX_EVENTS 6
+#define KRITS3M_MAX_EVENTS 6
 
 typedef struct {
-    char *event_names[MAX_EVENTS];
-    int event_codes[MAX_EVENTS];
+    char *event_names[KRITS3M_MAX_EVENTS];
+    int event_codes[KRITS3M_MAX_EVENTS];
     int num_events;
     int event_set;
-    long long values[MAX_EVENTS];
+    long long values[KRITS3M_MAX_EVENTS];
     char *file_name;
     FILE *export_handle;
 } EventConfig;
