@@ -163,20 +163,45 @@ __UA_Client_readAttribute(UA_Client *client, const UA_NodeId *nodeId,
                           UA_AttributeId attributeId, void *out,
                           const UA_DataType *outDataType);
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readNodeIdAttribute(UA_Client *client, const UA_NodeId nodeId,
                               UA_NodeId *outNodeId), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_NODEID,
                                      outNodeId, &UA_TYPES[UA_TYPES_NODEID]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readNodeIdAttribute(UA_Client *client, const UA_NodeId nodeId,
+                              UA_NodeId *outNodeId), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_NODEID,
+                                     outNodeId, &UA_TYPES[UA_TYPES_NODEID]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readNodeClassAttribute(UA_Client *client, const UA_NodeId nodeId,
                                  UA_NodeClass *outNodeClass), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_NODECLASS,
                                      outNodeClass, &UA_TYPES[UA_TYPES_NODECLASS]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readNodeClassAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                 UA_NodeClass *outNodeClass), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_NODECLASS,
+                                     outNodeClass, &UA_TYPES[UA_TYPES_NODECLASS]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readBrowseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                   UA_QualifiedName *outBrowseName), {
@@ -184,7 +209,20 @@ UA_Client_readBrowseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outBrowseName,
                                      &UA_TYPES[UA_TYPES_QUALIFIEDNAME]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readBrowseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                  UA_QualifiedName *outBrowseName), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_BROWSENAME,
+                                     outBrowseName,
+                                     &UA_TYPES[UA_TYPES_QUALIFIEDNAME]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readDisplayNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                    UA_LocalizedText *outDisplayName), {
@@ -192,7 +230,20 @@ UA_Client_readDisplayNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outDisplayName,
                                      &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readDisplayNameAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                   UA_LocalizedText *outDisplayName), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_DISPLAYNAME,
+                                     outDisplayName,
+                                     &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readDescriptionAttribute(UA_Client *client, const UA_NodeId nodeId,
                                    UA_LocalizedText *outDescription), {
@@ -200,14 +251,39 @@ UA_Client_readDescriptionAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outDescription,
                                      &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readDescriptionAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                   UA_LocalizedText *outDescription), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_DESCRIPTION,
+                                     outDescription,
+                                     &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readWriteMaskAttribute(UA_Client *client, const UA_NodeId nodeId,
                                  UA_UInt32 *outWriteMask), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_WRITEMASK,
                                      outWriteMask, &UA_TYPES[UA_TYPES_UINT32]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readWriteMaskAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                 UA_UInt32 *outWriteMask), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_WRITEMASK,
+                                     outWriteMask, &UA_TYPES[UA_TYPES_UINT32]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readUserWriteMaskAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      UA_UInt32 *outUserWriteMask), {
@@ -216,21 +292,59 @@ UA_Client_readUserWriteMaskAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outUserWriteMask,
                                      &UA_TYPES[UA_TYPES_UINT32]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readUserWriteMaskAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                     UA_UInt32 *outUserWriteMask), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId,
+                                     UA_ATTRIBUTEID_USERWRITEMASK,
+                                     outUserWriteMask,
+                                     &UA_TYPES[UA_TYPES_UINT32]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readIsAbstractAttribute(UA_Client *client, const UA_NodeId nodeId,
                                   UA_Boolean *outIsAbstract), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ISABSTRACT,
                                      outIsAbstract, &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readIsAbstractAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                  UA_Boolean *outIsAbstract), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ISABSTRACT,
+                                     outIsAbstract, &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readSymmetricAttribute(UA_Client *client, const UA_NodeId nodeId,
                                  UA_Boolean *outSymmetric), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_SYMMETRIC,
                                      outSymmetric, &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readSymmetricAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                 UA_Boolean *outSymmetric), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_SYMMETRIC,
+                                     outSymmetric, &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readInverseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                    UA_LocalizedText *outInverseName), {
@@ -238,7 +352,20 @@ UA_Client_readInverseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outInverseName,
                                      &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readInverseNameAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                   UA_LocalizedText *outInverseName), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_INVERSENAME,
+                                     outInverseName,
+                                     &UA_TYPES[UA_TYPES_LOCALIZEDTEXT]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readContainsNoLoopsAttribute(UA_Client *client, const UA_NodeId nodeId,
                                        UA_Boolean *outContainsNoLoops), {
@@ -247,13 +374,38 @@ UA_Client_readContainsNoLoopsAttribute(UA_Client *client, const UA_NodeId nodeId
                                      outContainsNoLoops,
                                      &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readContainsNoLoopsAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                       UA_Boolean *outContainsNoLoops), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId,
+                                     UA_ATTRIBUTEID_CONTAINSNOLOOPS,
+                                     outContainsNoLoops,
+                                     &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readEventNotifierAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      UA_Byte *outEventNotifier), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_EVENTNOTIFIER,
                                      outEventNotifier, &UA_TYPES[UA_TYPES_BYTE]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readEventNotifierAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                     UA_Byte *outEventNotifier), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_EVENTNOTIFIER,
+                                     outEventNotifier, &UA_TYPES[UA_TYPES_BYTE]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
 #ifndef KRITIS3M_PERFORMANCE_MONITORING
     UA_INLINABLE( UA_THREADSAFE UA_StatusCode
@@ -275,39 +427,88 @@ UA_Client_readEventNotifierAttribute(UA_Client *client, const UA_NodeId nodeId,
 #endif
 
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readDataTypeAttribute(UA_Client *client, const UA_NodeId nodeId,
                                 UA_NodeId *outDataType), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_DATATYPE,
                                      outDataType, &UA_TYPES[UA_TYPES_NODEID]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readDataTypeAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                UA_NodeId *outDataType), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_DATATYPE,
+                                     outDataType, &UA_TYPES[UA_TYPES_NODEID]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readValueRankAttribute(UA_Client *client, const UA_NodeId nodeId,
                                  UA_Int32 *outValueRank), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUERANK,
                                      outValueRank, &UA_TYPES[UA_TYPES_INT32]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readValueRankAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                 UA_Int32 *outValueRank), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_VALUERANK,
+                                     outValueRank, &UA_TYPES[UA_TYPES_INT32]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
 UA_StatusCode UA_EXPORT UA_THREADSAFE
 UA_Client_readArrayDimensionsAttribute(UA_Client *client, const UA_NodeId nodeId,
                                        size_t *outArrayDimensionsSize,
                                        UA_UInt32 **outArrayDimensions);
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readAccessLevelAttribute(UA_Client *client, const UA_NodeId nodeId,
                                    UA_Byte *outAccessLevel), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ACCESSLEVEL,
                                      outAccessLevel, &UA_TYPES[UA_TYPES_BYTE]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readAccessLevelAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                   UA_Byte *outAccessLevel), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ACCESSLEVEL,
+                                     outAccessLevel, &UA_TYPES[UA_TYPES_BYTE]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readAccessLevelExAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      UA_UInt32 *outAccessLevelEx), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ACCESSLEVELEX,
                                      outAccessLevelEx, &UA_TYPES[UA_TYPES_UINT32]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readAccessLevelExAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                     UA_UInt32 *outAccessLevelEx), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_ACCESSLEVELEX,
+                                     outAccessLevelEx, &UA_TYPES[UA_TYPES_UINT32]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readUserAccessLevelAttribute(UA_Client *client, const UA_NodeId nodeId,
                                        UA_Byte *outUserAccessLevel), {
@@ -316,7 +517,21 @@ UA_Client_readUserAccessLevelAttribute(UA_Client *client, const UA_NodeId nodeId
                                      outUserAccessLevel,
                                      &UA_TYPES[UA_TYPES_BYTE]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readUserAccessLevelAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                       UA_Byte *outUserAccessLevel), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId,
+                                     UA_ATTRIBUTEID_USERACCESSLEVEL,
+                                     outUserAccessLevel,
+                                     &UA_TYPES[UA_TYPES_BYTE]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readMinimumSamplingIntervalAttribute(UA_Client *client,
                                                const UA_NodeId nodeId,
@@ -326,21 +541,60 @@ UA_Client_readMinimumSamplingIntervalAttribute(UA_Client *client,
                                      outMinSamplingInterval,
                                      &UA_TYPES[UA_TYPES_DOUBLE]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readMinimumSamplingIntervalAttribute(UA_Client *client,
+                                               const UA_NodeId nodeId,
+                                               UA_Double *outMinSamplingInterval), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId,
+                                     UA_ATTRIBUTEID_MINIMUMSAMPLINGINTERVAL,
+                                     outMinSamplingInterval,
+                                     &UA_TYPES[UA_TYPES_DOUBLE]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readHistorizingAttribute(UA_Client *client, const UA_NodeId nodeId,
                                    UA_Boolean *outHistorizing), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_HISTORIZING,
                                      outHistorizing, &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readHistorizingAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                   UA_Boolean *outHistorizing), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_HISTORIZING,
+                                     outHistorizing, &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readExecutableAttribute(UA_Client *client, const UA_NodeId nodeId,
                                   UA_Boolean *outExecutable), {
     return __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_EXECUTABLE,
                                      outExecutable, &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readExecutableAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                  UA_Boolean *outExecutable), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId, UA_ATTRIBUTEID_EXECUTABLE,
+                                     outExecutable, &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
+#ifndef KRITIS3M_PERFORMANCE_MONITORING
 UA_INLINABLE( UA_THREADSAFE UA_StatusCode
 UA_Client_readUserExecutableAttribute(UA_Client *client, const UA_NodeId nodeId,
                                       UA_Boolean *outUserExecutable), {
@@ -349,6 +603,19 @@ UA_Client_readUserExecutableAttribute(UA_Client *client, const UA_NodeId nodeId,
                                      outUserExecutable,
                                      &UA_TYPES[UA_TYPES_BOOLEAN]);
 })
+#else
+    UA_INLINABLE( UA_THREADSAFE UA_StatusCode
+    UA_Client_readUserExecutableAttribute(UA_Client *client, const UA_NodeId nodeId,
+                                      UA_Boolean *outUserExecutable), {
+        start_event_set(global_config);
+        UA_StatusCode ret = __UA_Client_readAttribute(client, &nodeId,
+                                     UA_ATTRIBUTEID_USEREXECUTABLE,
+                                     outUserExecutable,
+                                     &UA_TYPES[UA_TYPES_BOOLEAN]);
+        stop_event_set(global_config);
+        return ret;
+    })
+#endif
 
 /**
  * Historical Access
